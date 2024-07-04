@@ -7,13 +7,6 @@ import (
 	"github.com/solarlune/goaseprite"
 )
 
-const (
-	ActionMoveLeft input.Action = iota
-	ActionMoveRight
-	ActionMoveUp
-	ActionMoveDown
-)
-
 type Player struct {
 	Speed  float64
 	Sprite *goaseprite.File

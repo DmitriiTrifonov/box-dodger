@@ -42,18 +42,23 @@ func main() {
 	g.Debug = true
 	g.BackgroundRender = []game.BackgroundRenderer{bgWall}
 	g.ForegroundRenderer = []game.ForegroundRenderer{fgWall}
-	g.InputSystem.Init(input.SystemConfig{
+	g.Controller = game.Controller{InputSystem: &input.System{}}
+	g.Controller.InputSystem.Init(input.SystemConfig{
 		DevicesEnabled: input.AnyDevice,
 	})
+
 	keymap := input.Keymap{
 		game.ActionMoveLeft:  {input.KeyGamepadLeft, input.KeyLeft, input.KeyA},
 		game.ActionMoveRight: {input.KeyGamepadRight, input.KeyRight, input.KeyD},
 		game.ActionMoveUp:    {input.KeyGamepadUp, input.KeyUp, input.KeyW},
 		game.ActionMoveDown:  {input.KeyGamepadDown, input.KeyDown, input.KeyS},
+		game.ActionExit:      {input.KeyEscape},
 	}
 
+	g.Controller.InputHandler = g.Controller.InputSystem.NewHandler(0, keymap)
+
 	g.Player = &game.Player{
-		Input:  g.InputSystem.NewHandler(0, keymap),
+		Input:  g.Controller.InputHandler,
 		Pos:    &gmath.Vec{X: 0, Y: 0},
 		Sprite: playerSprFile,
 		Anim:   playerSprFile.CreatePlayer(),

@@ -4,12 +4,11 @@ import (
 	"fmt"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
-	input "github.com/quasilyte/ebitengine-input"
 )
 
 type Game struct {
 	Debug              bool
-	InputSystem        input.System
+	Controller         Controller
 	Player             *Player
 	BackgroundRender   []BackgroundRenderer
 	ForegroundRenderer []ForegroundRenderer
@@ -26,7 +25,10 @@ type ForegroundRenderer interface {
 func (g *Game) Update() error {
 	g.Player.Anim.Update(float32(1.0 / 60.0))
 	g.Player.Update(ebiten.ActualTPS())
-	g.InputSystem.Update()
+	err := g.Controller.Update()
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
