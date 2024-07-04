@@ -2,16 +2,25 @@ package game
 
 import (
 	"fmt"
-	"github.com/DmitriiTrifonov/cave-pusher/internal/player"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 	input "github.com/quasilyte/ebitengine-input"
 )
 
 type Game struct {
-	Debug       bool
-	InputSystem input.System
-	Player      *player.Player
+	Debug              bool
+	InputSystem        input.System
+	Player             *Player
+	BackgroundRender   []BackgroundRenderer
+	ForegroundRenderer []ForegroundRenderer
+}
+
+type BackgroundRenderer interface {
+	RenderBackground(screen *ebiten.Image)
+}
+
+type ForegroundRenderer interface {
+	RenderForeground(screen *ebiten.Image)
 }
 
 func (g *Game) Update() error {
@@ -25,7 +34,13 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	if g.Debug {
 		ebitenutil.DebugPrint(screen, fmt.Sprintf("X: %v, Y: %v", g.Player.Pos.X, g.Player.Pos.Y))
 	}
+	for _, fr := range g.BackgroundRender {
+		fr.RenderBackground(screen)
+	}
 	g.Player.Draw(screen)
+	for _, fr := range g.ForegroundRenderer {
+		fr.RenderForeground(screen)
+	}
 }
 
 func (g *Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeight int) {

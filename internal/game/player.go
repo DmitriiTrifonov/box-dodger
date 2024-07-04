@@ -1,11 +1,10 @@
-package player
+package game
 
 import (
 	"github.com/hajimehoshi/ebiten/v2"
 	input "github.com/quasilyte/ebitengine-input"
 	"github.com/quasilyte/gmath"
 	"github.com/solarlune/goaseprite"
-	"log"
 )
 
 const (
@@ -57,7 +56,6 @@ func (p *Player) Move(actualTPS float64) {
 	}
 
 	vec = vec.ClampLen(1).Mulf(p.Speed / actualTPS)
-	log.Println("speed", vec.Len())
 
 	p.Pos.X += vec.X
 	p.Pos.Y += vec.Y
