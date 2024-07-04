@@ -48,3 +48,21 @@ func (g *Game) Draw(screen *ebiten.Image) {
 func (g *Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeight int) {
 	return 320, 180
 }
+
+func SetBackground[T BackgroundRenderer](game *Game, objects ...T) {
+	bg := make([]BackgroundRenderer, len(objects))
+	for i, obj := range objects {
+		bg[i] = obj
+	}
+
+	game.BackgroundRender = bg
+}
+
+func SetForeground[T ForegroundRenderer](game *Game, objects ...T) {
+	fg := make([]ForegroundRenderer, len(objects))
+	for i, obj := range objects {
+		fg[i] = obj
+	}
+
+	game.ForegroundRenderer = fg
+}

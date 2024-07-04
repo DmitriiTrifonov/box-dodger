@@ -24,11 +24,19 @@ func main() {
 		log.Fatal(err)
 	}
 
-	bgWall := &game.Wall{
-		Pos:    &gmath.Vec{X: 120, Y: 100},
-		Sprite: wallSprFile,
-		Anim:   wallSprFile.CreatePlayer(),
-		Img:    wallImg,
+	bgWalls := []*game.Wall{
+		{
+			Pos:    &gmath.Vec{X: 120, Y: 100},
+			Sprite: wallSprFile,
+			Anim:   wallSprFile.CreatePlayer(),
+			Img:    wallImg,
+		},
+		{
+			Pos:    &gmath.Vec{X: 168, Y: 100},
+			Sprite: wallSprFile,
+			Anim:   wallSprFile.CreatePlayer(),
+			Img:    wallImg,
+		},
 	}
 
 	fgWall := &game.Wall{
@@ -40,8 +48,8 @@ func main() {
 
 	g := &game.Game{}
 	g.Debug = true
-	g.BackgroundRender = []game.BackgroundRenderer{bgWall}
-	g.ForegroundRenderer = []game.ForegroundRenderer{fgWall}
+	game.SetBackground(g, bgWalls...)
+	game.SetForeground(g, fgWall)
 	g.Controller = game.Controller{InputSystem: &input.System{}}
 	g.Controller.InputSystem.Init(input.SystemConfig{
 		DevicesEnabled: input.AnyDevice,
