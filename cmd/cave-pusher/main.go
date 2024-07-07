@@ -3,53 +3,107 @@ package main
 import (
 	"github.com/DmitriiTrifonov/cave-pusher/internal/game"
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 	input "github.com/quasilyte/ebitengine-input"
 	"github.com/quasilyte/gmath"
-	"github.com/solarlune/goaseprite"
 	"log"
 )
 
+const (
+	TileNoTile int = iota
+	TileFloor
+	TileWallHorizontalContUpLeft
+	TileWallHorizontalContUp
+	TileWallHorizontalContUpRight
+	TileWallHorizontalContDown
+	TileWallVerticalContLeftUp
+	TileWallVerticalContLeft
+	TileWallVerticalContLeftDown
+	TileWallVerticalContRightUp
+	TileWallVerticalContRight
+	TileWallVerticalContRightDown
+)
+
 func main() {
-	playerSprFile := goaseprite.Open("assets/exported/man/man.json")
-
-	playerImg, _, err := ebitenutil.NewImageFromFile(playerSprFile.ImagePath)
+	playerSprite, err := game.NewSprite("assets/exported/man/man.json")
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	wallSprFile := goaseprite.Open("assets/exported/wall/wall.json")
-	wallImg, _, err := ebitenutil.NewImageFromFile(wallSprFile.ImagePath)
+	tileSet, err := game.NewSprite("assets/exported/tileset/tileset.json")
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	bgWalls := []*game.Wall{
-		{
-			Pos:    &gmath.Vec{X: 120, Y: 100},
-			Sprite: wallSprFile,
-			Anim:   wallSprFile.CreatePlayer(),
-			Img:    wallImg,
+	m := [][]int{
+		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+		{6, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 9},
+		{7, 1, 0, 1, 1, 1, 0, 0, 1, 1, 0, 0, 1, 10},
+		{7, 0, 1, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 10},
+		{7, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 10},
+		{7, 0, 1, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 10},
+		{8, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 11},
+	}
+
+	spriteTileMap := map[int]*game.TilePrefab{
+		TileNoTile: {
+			TileNum: 0,
+			Sprite:  tileSet,
 		},
-		{
-			Pos:    &gmath.Vec{X: 168, Y: 100},
-			Sprite: wallSprFile,
-			Anim:   wallSprFile.CreatePlayer(),
-			Img:    wallImg,
+		TileFloor: {
+			TileNum: 1,
+			Sprite:  tileSet,
+		},
+		TileWallHorizontalContUpLeft: {
+			TileNum: 2,
+			Sprite:  tileSet,
+		},
+		TileWallHorizontalContUp: {
+			TileNum: 3,
+			Sprite:  tileSet,
+		},
+		TileWallHorizontalContUpRight: {
+			TileNum: 4,
+			Sprite:  tileSet,
+		},
+		TileWallHorizontalContDown: {
+			TileNum: 5,
+			Sprite:  tileSet,
+		},
+		TileWallVerticalContLeftDown: {
+			TileNum: 6,
+			Sprite:  tileSet,
+		},
+		TileWallVerticalContLeft: {
+			TileNum: 7,
+			Sprite:  tileSet,
+		},
+		TileWallVerticalContLeftUp: {
+			TileNum: 8,
+			Sprite:  tileSet,
+		},
+		TileWallVerticalContRightDown: {
+			TileNum: 9,
+			Sprite:  tileSet,
+		},
+		TileWallVerticalContRight: {
+			TileNum: 10,
+			Sprite:  tileSet,
+		},
+		TileWallVerticalContRightUp: {
+			TileNum: 11,
+			Sprite:  tileSet,
 		},
 	}
 
-	fgWall := &game.Wall{
-		Pos:    &gmath.Vec{X: 144, Y: 100},
-		Sprite: wallSprFile,
-		Anim:   wallSprFile.CreatePlayer(),
-		Img:    wallImg,
+	tileMapBackground, err := game.NewTileMap(24, spriteTileMap, m)
+	if err != nil {
+		log.Fatal(err)
 	}
 
 	g := &game.Game{}
 	g.Debug = true
-	game.SetBackground(g, bgWalls...)
-	game.SetForeground(g, fgWall)
+	game.SetBackground(g, tileMapBackground)
+	//game.SetForeground(g, tileMapForeground)
 	g.Controller = game.Controller{InputSystem: &input.System{}}
 	g.Controller.InputSystem.Init(input.SystemConfig{
 		DevicesEnabled: input.AnyDevice,
@@ -66,17 +120,24 @@ func main() {
 	g.Controller.InputHandler = g.Controller.InputSystem.NewHandler(0, keymap)
 
 	g.Player = &game.Player{
-		Input:  g.Controller.InputHandler,
-		Pos:    &gmath.Vec{X: 0, Y: 0},
-		Sprite: playerSprFile,
-		Anim:   playerSprFile.CreatePlayer(),
-		Img:    playerImg,
-		Speed:  120,
+		Input: g.Controller.InputHandler,
+		Object: &game.Object{
+			Sprite:   playerSprite,
+			Pos:      &gmath.Vec{X: 0, Y: 0},
+			IsStatic: false,
+		},
+		Speed: 120,
 	}
+
+	err = g.Player.Object.Sprite.SetAnimTag("idle")
+	if err != nil {
+		log.Fatal(err)
+	}
+	g.Player.Object.Sprite.AnimPlayer.PlaySpeed = 0
 
 	ebiten.SetWindowSize(960, 540)
 	ebiten.SetWindowTitle("Walls Pusher")
-	if err := ebiten.RunGame(g); err != nil {
+	if err = ebiten.RunGame(g); err != nil {
 		log.Fatal(err)
 	}
 }

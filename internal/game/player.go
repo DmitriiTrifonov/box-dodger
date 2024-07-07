@@ -4,15 +4,11 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 	input "github.com/quasilyte/ebitengine-input"
 	"github.com/quasilyte/gmath"
-	"github.com/solarlune/goaseprite"
 )
 
 type Player struct {
 	Speed  float64
-	Sprite *goaseprite.File
-	Anim   *goaseprite.Player
-	Img    *ebiten.Image
-	Pos    *gmath.Vec
+	Object *Object
 	Input  *input.Handler
 }
 
@@ -50,12 +46,10 @@ func (p *Player) Move(actualTPS float64) {
 
 	vec = vec.ClampLen(1).Mulf(p.Speed / actualTPS)
 
-	p.Pos.X += vec.X
-	p.Pos.Y += vec.Y
+	p.Object.Pos.X += vec.X
+	p.Object.Pos.Y += vec.Y
 }
 
 func (p *Player) Draw(screen *ebiten.Image) {
-	op := &ebiten.DrawImageOptions{}
-	op.GeoM.Translate(p.Pos.X, p.Pos.Y)
-	screen.DrawImage(p.Img, op)
+	p.Object.Draw(screen)
 }

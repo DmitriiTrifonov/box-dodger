@@ -23,7 +23,7 @@ type ForegroundRenderer interface {
 }
 
 func (g *Game) Update() error {
-	g.Player.Anim.Update(float32(1.0 / 60.0))
+	//g.Player.Object.Sprite.AnimPlayer.Update(float32(1.0 / 60.0))
 	g.Player.Update(ebiten.ActualTPS())
 	err := g.Controller.Update()
 	if err != nil {
@@ -34,10 +34,11 @@ func (g *Game) Update() error {
 
 func (g *Game) Draw(screen *ebiten.Image) {
 	if g.Debug {
-		ebitenutil.DebugPrint(screen, fmt.Sprintf("X: %v, Y: %v", g.Player.Pos.X, g.Player.Pos.Y))
+		ebitenutil.DebugPrint(screen, fmt.Sprintf("X: %v, Y: %v",
+			g.Player.Object.Pos.X, g.Player.Object.Pos.Y))
 	}
-	for _, fr := range g.BackgroundRender {
-		fr.RenderBackground(screen)
+	for _, gr := range g.BackgroundRender {
+		gr.RenderBackground(screen)
 	}
 	g.Player.Draw(screen)
 	for _, fr := range g.ForegroundRenderer {
