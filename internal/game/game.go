@@ -10,6 +10,7 @@ type Game struct {
 	Debug              bool
 	Controller         Controller
 	Player             *Player
+	TileMap            *TileMap
 	BackgroundRender   []BackgroundRenderer
 	ForegroundRenderer []ForegroundRenderer
 }
@@ -23,13 +24,22 @@ type ForegroundRenderer interface {
 }
 
 func (g *Game) Update() error {
-	//g.Player.Object.Sprite.AnimPlayer.Update(float32(1.0 / 60.0))
+	g.Player.Object.Sprite.AnimPlayer.Update(float32(1.0 / 60.0))
 	g.Player.Update(ebiten.ActualTPS())
 	err := g.Controller.Update()
 	if err != nil {
 		return err
 	}
+	g.CheckCollisions()
 	return nil
+}
+
+func (g *Game) CheckCollisions() {
+	for _, hRow := range g.TileMap.Tiles {
+		for _, tile := range hRow {
+			g.Player.Collider.HasCollided(tile.Collider)
+		}
+	}
 }
 
 func (g *Game) Draw(screen *ebiten.Image) {

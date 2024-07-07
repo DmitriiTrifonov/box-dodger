@@ -35,13 +35,13 @@ func main() {
 	}
 
 	m := [][]int{
-		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-		{6, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 9},
-		{7, 1, 0, 1, 1, 1, 0, 0, 1, 1, 0, 0, 1, 10},
-		{7, 0, 1, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 10},
-		{7, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 10},
-		{7, 0, 1, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 10},
-		{8, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 11},
+		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+		{6, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 9},
+		{7, 1, 0, 1, 1, 1, 0, 0, 1, 1, 0, 0, 10},
+		{7, 0, 1, 1, 0, 0, 1, 0, 0, 0, 1, 0, 10},
+		{7, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 10},
+		{7, 0, 1, 1, 0, 0, 1, 0, 0, 0, 1, 0, 10},
+		{8, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 11},
 	}
 
 	spriteTileMap := map[int]*game.TilePrefab{
@@ -54,44 +54,54 @@ func main() {
 			Sprite:  tileSet,
 		},
 		TileWallHorizontalContUpLeft: {
-			TileNum: 2,
-			Sprite:  tileSet,
+			TileNum:     2,
+			Sprite:      tileSet,
+			HasCollider: true,
 		},
 		TileWallHorizontalContUp: {
-			TileNum: 3,
-			Sprite:  tileSet,
+			TileNum:     3,
+			Sprite:      tileSet,
+			HasCollider: true,
 		},
 		TileWallHorizontalContUpRight: {
-			TileNum: 4,
-			Sprite:  tileSet,
+			TileNum:     4,
+			Sprite:      tileSet,
+			HasCollider: true,
 		},
 		TileWallHorizontalContDown: {
-			TileNum: 5,
-			Sprite:  tileSet,
+			TileNum:     5,
+			Sprite:      tileSet,
+			HasCollider: true,
 		},
 		TileWallVerticalContLeftDown: {
-			TileNum: 6,
-			Sprite:  tileSet,
+			TileNum:     6,
+			Sprite:      tileSet,
+			HasCollider: true,
 		},
 		TileWallVerticalContLeft: {
-			TileNum: 7,
-			Sprite:  tileSet,
+			TileNum:     7,
+			Sprite:      tileSet,
+			HasCollider: true,
 		},
 		TileWallVerticalContLeftUp: {
-			TileNum: 8,
-			Sprite:  tileSet,
+			TileNum:     8,
+			Sprite:      tileSet,
+			HasCollider: true,
 		},
 		TileWallVerticalContRightDown: {
-			TileNum: 9,
-			Sprite:  tileSet,
+			TileNum:     9,
+			Sprite:      tileSet,
+			HasCollider: true,
 		},
 		TileWallVerticalContRight: {
-			TileNum: 10,
-			Sprite:  tileSet,
+			TileNum:     10,
+			Sprite:      tileSet,
+			HasCollider: true,
 		},
 		TileWallVerticalContRightUp: {
-			TileNum: 11,
-			Sprite:  tileSet,
+			TileNum:     11,
+			Sprite:      tileSet,
+			HasCollider: true,
 		},
 	}
 
@@ -103,6 +113,7 @@ func main() {
 	g := &game.Game{}
 	g.Debug = true
 	game.SetBackground(g, tileMapBackground)
+	g.TileMap = tileMapBackground
 	//game.SetForeground(g, tileMapForeground)
 	g.Controller = game.Controller{InputSystem: &input.System{}}
 	g.Controller.InputSystem.Init(input.SystemConfig{
@@ -125,6 +136,11 @@ func main() {
 			Sprite:   playerSprite,
 			Pos:      &gmath.Vec{X: 0, Y: 0},
 			IsStatic: false,
+		},
+		Collider: &game.Collider{
+			StartPos: gmath.Vec{6, 16},
+			Height:   6,
+			Width:    12,
 		},
 		Speed: 120,
 	}

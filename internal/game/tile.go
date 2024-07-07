@@ -5,7 +5,6 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/quasilyte/gmath"
 	"image"
-	"log"
 )
 
 const (
@@ -13,12 +12,14 @@ const (
 )
 
 type TilePrefab struct {
-	TileNum int
-	Sprite  *Sprite
+	TileNum     int
+	HasCollider bool
+	Sprite      *Sprite
 }
 
 type Tile struct {
-	Object *Object
+	Object   *Object
+	Collider *Collider
 }
 
 func NewTile(gridX, gridY, gridSize int, prefab *TilePrefab) (*Tile, error) {
@@ -36,7 +37,17 @@ func NewTile(gridX, gridY, gridSize int, prefab *TilePrefab) (*Tile, error) {
 	cloned.AnimPlayer.SetFrameIndex(prefab.TileNum)
 	cloned.AnimPlayer.PlaySpeed = 0
 
-	log.Println(prefab.Sprite.AnimPlayer.CurrentFrame())
+	var collider *Collider
+
+	if prefab.HasCollider {
+		collider = &Collider{
+			StartPos: gmath.Vec{0, 0},
+			Height:   24,
+			Width:    24,
+		}
+
+		collider.Update(&pos)
+	}
 
 	return &Tile{
 		Object: &Object{
@@ -45,6 +56,7 @@ func NewTile(gridX, gridY, gridSize int, prefab *TilePrefab) (*Tile, error) {
 			IsStatic:     true,
 			StartAnimIdx: prefab.TileNum,
 		},
+		Collider: collider,
 	}, nil
 }
 

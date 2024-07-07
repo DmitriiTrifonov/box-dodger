@@ -7,13 +7,19 @@ import (
 )
 
 type Player struct {
-	Speed  float64
-	Object *Object
-	Input  *input.Handler
+	Speed    float64
+	Object   *Object
+	Collider *Collider
+	Input    *input.Handler
 }
 
 func (p *Player) Update(actualTPS float64) {
 	p.Move(actualTPS)
+	p.UpdateCollider()
+}
+
+func (p *Player) UpdateCollider() {
+	p.Collider.Update(p.Object.Pos)
 }
 
 func (p *Player) Move(actualTPS float64) {
