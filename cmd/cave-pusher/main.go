@@ -126,24 +126,24 @@ func main() {
 		game.ActionMoveUp:    {input.KeyGamepadUp, input.KeyUp, input.KeyW},
 		game.ActionMoveDown:  {input.KeyGamepadDown, input.KeyDown, input.KeyS},
 		game.ActionExit:      {input.KeyEscape},
+		game.ActionRestart:   {input.KeyR},
 	}
 
 	g.Controller.InputHandler = g.Controller.InputSystem.NewHandler(0, keymap)
 
-	g.Player = &game.Player{
-		Input: g.Controller.InputHandler,
-		Object: &game.Object{
+	g.Player = game.NewPlayer(
+		120,
+		&game.Object{
 			Sprite:   playerSprite,
-			Pos:      &gmath.Vec{X: 0, Y: 0},
+			Pos:      &gmath.Vec{X: 96, Y: 96},
 			IsStatic: false,
 		},
-		Collider: &game.Collider{
+		&game.Collider{
 			StartPos: gmath.Vec{6, 16},
 			Height:   6,
 			Width:    12,
 		},
-		Speed: 120,
-	}
+		g.Controller.InputHandler)
 
 	err = g.Player.Object.Sprite.SetAnimTag("idle")
 	if err != nil {
@@ -153,7 +153,7 @@ func main() {
 
 	ebiten.SetWindowSize(960, 540)
 	ebiten.SetWindowTitle("Walls Pusher")
-	if err = ebiten.RunGame(g); err != nil {
+	if err = g.Run(); err != nil {
 		log.Fatal(err)
 	}
 }

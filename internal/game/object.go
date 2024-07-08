@@ -12,6 +12,10 @@ type Object struct {
 	StartAnimIdx int
 }
 
+func (o *Object) SetPos(newPos *gmath.Vec) {
+	o.Pos = newPos
+}
+
 func (o *Object) Draw(screen *ebiten.Image) {
 	opts := &ebiten.DrawImageOptions{}
 	opts.GeoM.Translate(o.Pos.X, o.Pos.Y)

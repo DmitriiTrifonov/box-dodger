@@ -15,5 +15,8 @@ func (c *Controller) Update() error {
 	if c.InputHandler.ActionIsPressed(ActionExit) {
 		return ebiten.Termination
 	}
+	if c.InputHandler.ActionIsPressed(ActionRestart) {
+		return ErrRestartGame
+	}
 	return nil
 }

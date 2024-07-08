@@ -1,6 +1,7 @@
 package game
 
 import (
+	"errors"
 	"fmt"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
@@ -15,6 +16,15 @@ type Game struct {
 	ForegroundRenderer []ForegroundRenderer
 }
 
+func New(controller Controller, player *Player, tileMap TileMap) *Game {
+	g := &Game{}
+
+	g.Debug = true
+	g.Controller = controller
+
+	return g
+}
+
 type BackgroundRenderer interface {
 	RenderBackground(screen *ebiten.Image)
 }
@@ -24,35 +34,42 @@ type ForegroundRenderer interface {
 }
 
 func (g *Game) Update() error {
+	g.Player.HasCollided = g.CheckCollisions()
 	g.Player.Object.Sprite.AnimPlayer.Update(float32(1.0 / 60.0))
 	g.Player.Update(ebiten.ActualTPS())
 	err := g.Controller.Update()
 	if err != nil {
 		return err
 	}
-	g.CheckCollisions()
+
 	return nil
 }
 
-func (g *Game) CheckCollisions() {
+func (g *Game) CheckCollisions() bool {
 	for _, hRow := range g.TileMap.Tiles {
 		for _, tile := range hRow {
-			g.Player.Collider.HasCollided(tile.Collider)
+			ok := g.Player.Collider.HasCollided(tile.Collider)
+			if ok {
+				return true
+			}
 		}
 	}
+
+	return false
 }
 
 func (g *Game) Draw(screen *ebiten.Image) {
-	if g.Debug {
-		ebitenutil.DebugPrint(screen, fmt.Sprintf("X: %v, Y: %v",
-			g.Player.Object.Pos.X, g.Player.Object.Pos.Y))
-	}
 	for _, gr := range g.BackgroundRender {
 		gr.RenderBackground(screen)
 	}
 	g.Player.Draw(screen)
 	for _, fr := range g.ForegroundRenderer {
 		fr.RenderForeground(screen)
+	}
+
+	if g.Debug {
+		ebitenutil.DebugPrintAt(screen, fmt.Sprintf("Collided: %v",
+			g.Player.HasCollided), 0, 0)
 	}
 }
 
@@ -76,4 +93,14 @@ func SetForeground[T ForegroundRenderer](game *Game, objects ...T) {
 	}
 
 	game.ForegroundRenderer = fg
+}
+
+func (g *Game) Run() error {
+	err := ebiten.RunGame(g)
+	switch {
+	case errors.Is(err, ErrRestartGame):
+		return g.Run()
+	default:
+		return err
+	}
 }

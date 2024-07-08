@@ -2,7 +2,6 @@ package game
 
 import (
 	"github.com/quasilyte/gmath"
-	"log"
 )
 
 type Collider struct {
@@ -21,7 +20,6 @@ func (c *Collider) HasCollided(other *Collider) bool {
 		c.Vec.X+other.Width > other.Vec.X &&
 		c.Vec.Y < other.Vec.Y+other.Height &&
 		c.Vec.Y+c.Height > other.Vec.Y {
-		log.Println("collided")
 		return true
 	}
 	return false
