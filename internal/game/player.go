@@ -12,7 +12,7 @@ type Player struct {
 	Object      *Object
 	Collider    *Collider
 	Input       *input.Handler
-	LastPos     *gmath.Vec
+	LastPos     gmath.Vec
 	HasCollided bool
 }
 
@@ -47,7 +47,6 @@ func (p *Player) UpdateCollider() {
 
 func (p *Player) UpdateLastPos() {
 	if !p.HasCollided {
-		log.Println("change last")
 		p.LastPos = p.Object.Pos
 	}
 }
@@ -83,14 +82,12 @@ func (p *Player) Move(actualTPS float64) {
 	vec = vec.ClampLen(1).Mulf(p.Speed / actualTPS)
 
 	if !p.HasCollided {
-		p.Object.Pos.X += vec.X
-		p.Object.Pos.Y += vec.Y
+		p.Object.Pos = p.Object.Pos.Add(vec)
 	} else {
-		p.Object.Pos.X = p.LastPos.X
-		p.Object.Pos.Y = p.LastPos.Y
-		p.HasCollided = false
-	}
+		vec = gmath.Vec{}
+		p.Object.Pos = p.LastPos
 
+	}
 }
 
 func (p *Player) Draw(screen *ebiten.Image) {

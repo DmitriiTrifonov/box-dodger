@@ -44,6 +44,24 @@ func main() {
 		{8, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 11},
 	}
 
+	colliderFull := &game.Collider{
+		StartPos: gmath.Vec{0, 0},
+		Height:   24,
+		Width:    24,
+	}
+
+	colliderDown := &game.Collider{
+		StartPos: gmath.Vec{0, 16},
+		Height:   24 - 16,
+		Width:    24,
+	}
+
+	colliderRight := &game.Collider{
+		StartPos: gmath.Vec{0, 0},
+		Height:   24,
+		Width:    24 - 16,
+	}
+
 	spriteTileMap := map[int]*game.TilePrefab{
 		TileNoTile: {
 			TileNum: 0,
@@ -54,54 +72,54 @@ func main() {
 			Sprite:  tileSet,
 		},
 		TileWallHorizontalContUpLeft: {
-			TileNum:     2,
-			Sprite:      tileSet,
-			HasCollider: true,
+			TileNum:  2,
+			Sprite:   tileSet,
+			Collider: colliderFull,
 		},
 		TileWallHorizontalContUp: {
-			TileNum:     3,
-			Sprite:      tileSet,
-			HasCollider: true,
+			TileNum:  3,
+			Sprite:   tileSet,
+			Collider: colliderFull,
 		},
 		TileWallHorizontalContUpRight: {
-			TileNum:     4,
-			Sprite:      tileSet,
-			HasCollider: true,
+			TileNum:  4,
+			Sprite:   tileSet,
+			Collider: colliderFull,
 		},
 		TileWallHorizontalContDown: {
-			TileNum:     5,
-			Sprite:      tileSet,
-			HasCollider: true,
+			TileNum:  5,
+			Sprite:   tileSet,
+			Collider: colliderDown,
 		},
 		TileWallVerticalContLeftDown: {
-			TileNum:     6,
-			Sprite:      tileSet,
-			HasCollider: true,
+			TileNum:  6,
+			Sprite:   tileSet,
+			Collider: colliderFull,
 		},
 		TileWallVerticalContLeft: {
-			TileNum:     7,
-			Sprite:      tileSet,
-			HasCollider: true,
+			TileNum:  7,
+			Sprite:   tileSet,
+			Collider: colliderFull,
 		},
 		TileWallVerticalContLeftUp: {
-			TileNum:     8,
-			Sprite:      tileSet,
-			HasCollider: true,
+			TileNum:  8,
+			Sprite:   tileSet,
+			Collider: colliderFull,
 		},
 		TileWallVerticalContRightDown: {
-			TileNum:     9,
-			Sprite:      tileSet,
-			HasCollider: true,
+			TileNum:  9,
+			Sprite:   tileSet,
+			Collider: colliderRight,
 		},
 		TileWallVerticalContRight: {
-			TileNum:     10,
-			Sprite:      tileSet,
-			HasCollider: true,
+			TileNum:  10,
+			Sprite:   tileSet,
+			Collider: colliderRight,
 		},
 		TileWallVerticalContRightUp: {
-			TileNum:     11,
-			Sprite:      tileSet,
-			HasCollider: true,
+			TileNum:  11,
+			Sprite:   tileSet,
+			Collider: colliderRight,
 		},
 	}
 
@@ -135,7 +153,7 @@ func main() {
 		120,
 		&game.Object{
 			Sprite:   playerSprite,
-			Pos:      &gmath.Vec{X: 96, Y: 96},
+			Pos:      gmath.Vec{X: 96, Y: 96},
 			IsStatic: false,
 		},
 		&game.Collider{

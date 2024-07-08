@@ -25,6 +25,6 @@ func (c *Collider) HasCollided(other *Collider) bool {
 	return false
 }
 
-func (c *Collider) Update(objectPos *gmath.Vec) {
+func (c *Collider) Update(objectPos gmath.Vec) {
 	c.Vec = objectPos.Add(c.StartPos)
 }

@@ -7,12 +7,12 @@ import (
 
 type Object struct {
 	Sprite       *Sprite
-	Pos          *gmath.Vec
+	Pos          gmath.Vec
 	IsStatic     bool
 	StartAnimIdx int
 }
 
-func (o *Object) SetPos(newPos *gmath.Vec) {
+func (o *Object) SetPos(newPos gmath.Vec) {
 	o.Pos = newPos
 }
 

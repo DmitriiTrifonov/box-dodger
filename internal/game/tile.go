@@ -12,9 +12,9 @@ const (
 )
 
 type TilePrefab struct {
-	TileNum     int
-	HasCollider bool
-	Sprite      *Sprite
+	TileNum  int
+	Collider *Collider
+	Sprite   *Sprite
 }
 
 type Tile struct {
@@ -39,20 +39,19 @@ func NewTile(gridX, gridY, gridSize int, prefab *TilePrefab) (*Tile, error) {
 
 	var collider *Collider
 
-	if prefab.HasCollider {
+	if prefab.Collider != nil {
 		collider = &Collider{
-			StartPos: gmath.Vec{0, 0},
-			Height:   24,
-			Width:    24,
+			StartPos: prefab.Collider.StartPos,
+			Height:   prefab.Collider.Height,
+			Width:    prefab.Collider.Width,
 		}
-
-		collider.Update(&pos)
+		collider.Update(pos)
 	}
 
 	return &Tile{
 		Object: &Object{
 			Sprite:       cloned,
-			Pos:          &pos,
+			Pos:          pos,
 			IsStatic:     true,
 			StartAnimIdx: prefab.TileNum,
 		},
