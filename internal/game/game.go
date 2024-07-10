@@ -7,6 +7,10 @@ import (
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 )
 
+const (
+	collisionTagWalls = "walls"
+)
+
 type Game struct {
 	Debug              bool
 	Controller         Controller
@@ -34,9 +38,9 @@ type ForegroundRenderer interface {
 }
 
 func (g *Game) Update() error {
-	g.Player.HasCollided = g.CheckCollisions()
 	g.Player.Object.Sprite.AnimPlayer.Update(float32(1.0 / 60.0))
-	g.Player.Update(ebiten.ActualTPS())
+	g.Player.Update(ebiten.TPS())
+	g.Player.HasCollided = g.CheckCollisions()
 	err := g.Controller.Update()
 	if err != nil {
 		return err

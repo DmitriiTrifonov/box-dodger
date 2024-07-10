@@ -4,7 +4,6 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 	input "github.com/quasilyte/ebitengine-input"
 	"github.com/quasilyte/gmath"
-	"log"
 )
 
 type Player struct {
@@ -29,20 +28,17 @@ func NewPlayer(speed float64, object *Object,
 	}
 }
 
-func (p *Player) Update(actualTPS float64) {
+func (p *Player) Update(tps int) {
 	p.UpdateLastPos()
-	p.Move(actualTPS)
-	p.UpdateCollider()
-	log.Println("cur", p.Object.Pos, "last", p.LastPos)
+	p.Move(tps)
 }
 
 func (p *Player) SetLastPos() {
 	p.Object.SetPos(p.LastPos)
-	p.UpdateCollider()
 }
 
-func (p *Player) UpdateCollider() {
-	p.Collider.Update(p.Object.Pos)
+func (p *Player) UpdateCollider(vec gmath.Vec) {
+	p.Collider.Update(vec)
 }
 
 func (p *Player) UpdateLastPos() {
@@ -51,10 +47,8 @@ func (p *Player) UpdateLastPos() {
 	}
 }
 
-func (p *Player) Move(actualTPS float64) {
-	if actualTPS == 0 {
-		actualTPS = float64(ebiten.TPS())
-	}
+func (p *Player) MoveOld(actualTPS int) {
+	//velocity := gmath.Vec{}
 
 	x, y := 0.0, 0.0
 
@@ -79,15 +73,60 @@ func (p *Player) Move(actualTPS float64) {
 		Y: y,
 	}
 
-	vec = vec.ClampLen(1).Mulf(p.Speed / actualTPS)
+	vec = vec.ClampLen(1).Mulf(p.Speed / float64(actualTPS))
 
 	if !p.HasCollided {
 		p.Object.Pos = p.Object.Pos.Add(vec)
 	} else {
-		vec = gmath.Vec{}
 		p.Object.Pos = p.LastPos
-
 	}
+}
+
+func (p *Player) Move(tps int) {
+	// 1) Check input
+	// 2) Update vector
+	// 3) Update collider
+	// 4) Check for collisions
+	// 5) Update movement
+
+	vec := p.getInputAxis().ClampLen(1).Mulf(p.Speed / float64(tps))
+
+	position := p.Object.Pos.Add(vec)
+
+	p.UpdateCollider(position)
+
+	if p.Collider.CheckCollisionsWithTag(collisionTagWalls) {
+		p.HasCollided = true
+		position = p.LastPos
+
+		return
+	}
+
+	p.HasCollided = false
+	p.Object.Pos = position
+}
+
+func (p *Player) getInputAxis() gmath.Vec {
+	x, y := 0.0, 0.0
+
+	if p.Input.ActionIsPressed(ActionMoveLeft) {
+
+		x = -1
+	}
+
+	if p.Input.ActionIsPressed(ActionMoveRight) {
+		x = 1
+	}
+
+	if p.Input.ActionIsPressed(ActionMoveUp) {
+		y = -1
+	}
+
+	if p.Input.ActionIsPressed(ActionMoveDown) {
+		y = 1
+	}
+
+	return gmath.Vec{X: x, Y: y}
 }
 
 func (p *Player) Draw(screen *ebiten.Image) {

@@ -44,9 +44,12 @@ func NewTile(gridX, gridY, gridSize int, prefab *TilePrefab) (*Tile, error) {
 			StartPos: prefab.Collider.StartPos,
 			Height:   prefab.Collider.Height,
 			Width:    prefab.Collider.Width,
+			Tag:      collisionTagWalls,
 		}
 		collider.Update(pos)
 	}
+
+	AddCollisionToTag(collisionTagWalls, collider)
 
 	return &Tile{
 		Object: &Object{
