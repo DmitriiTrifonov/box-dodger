@@ -5,19 +5,27 @@ import (
 	"fmt"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
+	"image/color"
+	"time"
 )
 
 const (
-	collisionTagWalls = "walls"
+	collisionTagWalls  = "walls"
+	collisionTagBox    = "box"
+	collisionTagPlayer = "player"
 )
 
 type Game struct {
 	Debug              bool
 	Controller         Controller
 	Player             *Player
+	Box                *Box
 	TileMap            *TileMap
 	BackgroundRender   []BackgroundRenderer
 	ForegroundRenderer []ForegroundRenderer
+	IsGameOver         bool
+	StartTime          time.Time
+	TotalTime          time.Duration
 }
 
 func New(controller Controller, player *Player, tileMap TileMap) *Game {
@@ -38,9 +46,12 @@ type ForegroundRenderer interface {
 }
 
 func (g *Game) Update() error {
-	g.Player.Object.Sprite.AnimPlayer.Update(float32(1.0 / 60.0))
-	g.Player.Update(ebiten.TPS())
-	g.Player.HasCollided = g.CheckCollisions()
+	if !g.IsGameOver {
+		g.Player.Object.Sprite.AnimPlayer.Update(float32(1.0 / 60.0))
+		g.Player.Update(ebiten.TPS())
+		//g.Player.HasCollided = g.CheckCollisions()
+		g.Box.Update(ebiten.TPS(), g)
+	}
 	err := g.Controller.Update()
 	if err != nil {
 		return err
@@ -63,17 +74,26 @@ func (g *Game) CheckCollisions() bool {
 }
 
 func (g *Game) Draw(screen *ebiten.Image) {
-	for _, gr := range g.BackgroundRender {
-		gr.RenderBackground(screen)
-	}
-	g.Player.Draw(screen)
-	for _, fr := range g.ForegroundRenderer {
-		fr.RenderForeground(screen)
+	if g.IsGameOver {
+		screen.Fill(color.RGBA{R: 0xff, A: 0xff})
+		ebitenutil.DebugPrintAt(screen, fmt.Sprintf("Game Over\nYou survived for: %.1f seconds",
+			g.TotalTime.Seconds()), 320/4, 160/4)
+
+	} else {
+		for _, gr := range g.BackgroundRender {
+			gr.RenderBackground(screen)
+		}
+		g.Player.Draw(screen)
+		g.Box.Draw(screen)
+		for _, fr := range g.ForegroundRenderer {
+			fr.RenderForeground(screen)
+		}
+		ebitenutil.DebugPrintAt(screen, fmt.Sprintf("Dodge time: %.1f seconds",
+			time.Since(g.StartTime).Seconds()), 16, 8)
 	}
 
 	if g.Debug {
-		ebitenutil.DebugPrintAt(screen, fmt.Sprintf("Collided: %v",
-			g.Player.HasCollided), 0, 0)
+
 	}
 }
 
@@ -100,6 +120,8 @@ func SetForeground[T ForegroundRenderer](game *Game, objects ...T) {
 }
 
 func (g *Game) Run() error {
+	ebiten.SetWindowSize(960, 540)
+	ebiten.SetWindowTitle("box dodger")
 	err := ebiten.RunGame(g)
 	switch {
 	case errors.Is(err, ErrRestartGame):

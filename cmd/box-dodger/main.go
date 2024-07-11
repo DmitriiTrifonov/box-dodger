@@ -2,10 +2,10 @@ package main
 
 import (
 	"github.com/DmitriiTrifonov/cave-pusher/internal/game"
-	"github.com/hajimehoshi/ebiten/v2"
 	input "github.com/quasilyte/ebitengine-input"
 	"github.com/quasilyte/gmath"
 	"log"
+	"time"
 )
 
 const (
@@ -30,6 +30,11 @@ func main() {
 	}
 
 	tileSet, err := game.NewSprite("assets/exported/tileset/tileset.json")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	boxSprite, err := game.NewSprite("assets/exported/box/box.json")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -132,6 +137,7 @@ func main() {
 	g.Debug = true
 	game.SetBackground(g, tileMapBackground)
 	g.TileMap = tileMapBackground
+	g.StartTime = time.Now()
 	//game.SetForeground(g, tileMapForeground)
 	g.Controller = game.Controller{InputSystem: &input.System{}}
 	g.Controller.InputSystem.Init(input.SystemConfig{
@@ -153,7 +159,7 @@ func main() {
 		120,
 		&game.Object{
 			Sprite:   playerSprite,
-			Pos:      gmath.Vec{X: 96, Y: 96},
+			Pos:      gmath.Vec{X: 48, Y: 48},
 			IsStatic: false,
 		},
 		&game.Collider{
@@ -169,8 +175,25 @@ func main() {
 	}
 	g.Player.Object.Sprite.AnimPlayer.PlaySpeed = 0
 
-	ebiten.SetWindowSize(960, 540)
-	ebiten.SetWindowTitle("Walls Pusher")
+	g.Box = game.NewBox(
+		120,
+		&game.Object{
+			Sprite:   boxSprite,
+			Pos:      gmath.Vec{48.0, 72.0},
+			IsStatic: false,
+		},
+		&game.Collider{
+			Height: 16,
+			Width:  16,
+			Tag:    "box",
+		})
+
+	err = g.Box.Object.Sprite.SetAnimTag("")
+	if err != nil {
+		log.Fatal(err)
+	}
+	g.Box.Object.Sprite.AnimPlayer.PlaySpeed = 0
+
 	if err = g.Run(); err != nil {
 		log.Fatal(err)
 	}

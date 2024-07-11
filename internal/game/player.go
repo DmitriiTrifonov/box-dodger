@@ -19,6 +19,8 @@ func NewPlayer(speed float64, object *Object,
 	collider *Collider, inputHandler *input.Handler) *Player {
 	lastPos := object.Pos
 
+	AddCollisionToTag(collisionTagPlayer, collider)
+
 	return &Player{
 		Speed:    speed,
 		Object:   object,
