@@ -120,7 +120,7 @@ func SetForeground[T ForegroundRenderer](game *Game, objects ...T) {
 }
 
 func (g *Game) Run() error {
-	ebiten.SetWindowSize(960, 540)
+	ebiten.SetWindowSize(400, 240)
 	ebiten.SetWindowTitle("box dodger")
 	err := ebiten.RunGame(g)
 	switch {
