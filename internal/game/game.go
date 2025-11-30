@@ -3,10 +3,11 @@ package game
 import (
 	"errors"
 	"fmt"
-	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 	"image/color"
 	"time"
+
+	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 )
 
 const (
@@ -120,7 +121,7 @@ func SetForeground[T ForegroundRenderer](game *Game, objects ...T) {
 }
 
 func (g *Game) Run() error {
-	ebiten.SetWindowSize(400, 240)
+	ebiten.SetWindowSize(1600, 960)
 	ebiten.SetWindowTitle("box dodger")
 	err := ebiten.RunGame(g)
 	switch {

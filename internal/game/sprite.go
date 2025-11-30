@@ -1,10 +1,12 @@
 package game
 
 import (
+	"image"
+	"os"
+
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 	"github.com/solarlune/goaseprite"
-	"image"
 )
 
 type Sprite struct {
@@ -14,7 +16,11 @@ type Sprite struct {
 }
 
 func NewSprite(path string) (*Sprite, error) {
-	file := goaseprite.Open(path)
+	dirFS := os.DirFS("./bin")
+	file, err := goaseprite.Open(path, dirFS)
+	if err != nil {
+		return nil, err
+	}
 
 	img, _, err := ebitenutil.NewImageFromFile(file.ImagePath)
 	if err != nil {
@@ -40,7 +46,7 @@ func (s *Sprite) Draw(screen *ebiten.Image, opts *ebiten.DrawImageOptions) {
 }
 
 func (s *Sprite) SetFrameIdx(idx int) {
-	s.AnimPlayer.SetFrameIndex(idx)
+	s.AnimPlayer.SetFrameIndexInAnimation(idx)
 }
 
 func (s *Sprite) Clone() *Sprite {

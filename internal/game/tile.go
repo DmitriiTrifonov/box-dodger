@@ -2,9 +2,10 @@ package game
 
 import (
 	"fmt"
+	"image"
+
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/quasilyte/gmath"
-	"image"
 )
 
 const (
@@ -34,7 +35,7 @@ func NewTile(gridX, gridY, gridSize int, prefab *TilePrefab) (*Tile, error) {
 		return nil, fmt.Errorf("cannot set tileset anim: %w", err)
 	}
 
-	cloned.AnimPlayer.SetFrameIndex(prefab.TileNum)
+	cloned.AnimPlayer.SetFrameIndexInAnimation(prefab.TileNum)
 	cloned.AnimPlayer.PlaySpeed = 0
 
 	var collider *Collider

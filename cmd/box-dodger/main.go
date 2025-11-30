@@ -1,11 +1,12 @@
 package main
 
 import (
+	"log"
+	"time"
+
 	"github.com/DmitriiTrifonov/cave-pusher/internal/game"
 	input "github.com/quasilyte/ebitengine-input"
 	"github.com/quasilyte/gmath"
-	"log"
-	"time"
 )
 
 const (
@@ -62,7 +63,7 @@ func main() {
 	}
 
 	colliderRight := &game.Collider{
-		StartPos: gmath.Vec{0, 0},
+		StartPos: gmath.Vec{},
 		Height:   24,
 		Width:    24 - 16,
 	}
@@ -163,7 +164,7 @@ func main() {
 			IsStatic: false,
 		},
 		&game.Collider{
-			StartPos: gmath.Vec{6, 16},
+			StartPos: gmath.Vec{X: 6, Y: 16},
 			Height:   6,
 			Width:    12,
 		},
@@ -179,7 +180,7 @@ func main() {
 		120,
 		&game.Object{
 			Sprite:   boxSprite,
-			Pos:      gmath.Vec{48.0, 72.0},
+			Pos:      gmath.Vec{X: 48.0, Y: 72.0},
 			IsStatic: false,
 		},
 		&game.Collider{
