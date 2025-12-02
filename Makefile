@@ -1,9 +1,9 @@
 define WEBGAME
 <!DOCTYPE html>
-<script src="wasm_exec.js"></script>
+<script src=\"wasm_exec.js\"></script>
 <script>
 const go = new Go();
-WebAssembly.instantiateStreaming(fetch("box-dodger.wasm"), go.importObject).then(result => {
+WebAssembly.instantiateStreaming(fetch(\"box-dodger.wasm\"), go.importObject).then(result => {
     go.run(result.instance);
 });
 </script>
@@ -25,4 +25,11 @@ wasm_exec.js: bin/
 	cp $(GOROOT)/lib/wasm/wasm_exec.js bin/
 
 index.html:
-	@echo "$(WEBGAME)" > index.html
+	@printf "<!DOCTYPE html>\n" > bin/index.html
+	@printf "<script src=\"wasm_exec.js\"></script>\n" >> bin/index.html
+	@printf "<script>\n" >> bin/index.html
+	@printf "const go = new Go();\n" >> bin/index.html
+	@printf "WebAssembly.instantiateStreaming(fetch(\"box-dodger.wasm\"), go.importObject).then(result => {\n" >> bin/index.html
+	@printf "    go.run(result.instance);\n" >> bin/index.html
+	@printf "});\n" >> bin/index.html
+	@printf "</script>" >> bin/index.html

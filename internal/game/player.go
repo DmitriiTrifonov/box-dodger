@@ -1,6 +1,8 @@
 package game
 
 import (
+	"log"
+
 	"github.com/hajimehoshi/ebiten/v2"
 	input "github.com/quasilyte/ebitengine-input"
 	"github.com/quasilyte/gmath"
@@ -47,6 +49,10 @@ func (p *Player) UpdateLastPos() {
 	if !p.HasCollided {
 		p.LastPos = p.Object.Pos
 	}
+}
+
+func (p *Player) MoveDrag() {
+
 }
 
 func (p *Player) MoveOld(actualTPS int) {
@@ -109,6 +115,26 @@ func (p *Player) Move(tps int) {
 }
 
 func (p *Player) getInputAxis() gmath.Vec {
+	if p.Input.TouchEventsEnabled() {
+
+		if info, ok := p.Input.JustPressedActionInfo(ActionTap); ok {
+			if info.HasPos() {
+				log.Println("has tap", info)
+			}
+		}
+
+		if info, ok := p.Input.PressedActionInfo(ActionDrag); ok {
+			if info.HasPos() {
+				log.Println("dragging", info)
+				_ = info.StartPos
+			}
+		}
+	} else {
+		if info, ok := p.Input.JustPressedActionInfo(ActionTap); ok && info.HasPos() {
+			log.Println("has tap", info)
+		}
+	}
+
 	x, y := 0.0, 0.0
 
 	if p.Input.ActionIsPressed(ActionMoveLeft) {

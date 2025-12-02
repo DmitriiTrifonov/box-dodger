@@ -2,8 +2,11 @@ package game
 
 import (
 	"image"
+	"io/fs"
 	"os"
+	"runtime"
 
+	"github.com/DmitriiTrifonov/cave-pusher/assets"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 	"github.com/solarlune/goaseprite"
@@ -16,8 +19,15 @@ type Sprite struct {
 }
 
 func NewSprite(path string) (*Sprite, error) {
-	dirFS := os.DirFS("./bin")
-	file, err := goaseprite.Open(path, dirFS)
+	var gameFS fs.FS
+
+	if runtime.GOOS == "js" {
+		gameFS = assets.FS
+	} else {
+		gameFS = os.DirFS("./assets/")
+	}
+
+	file, err := goaseprite.Open(path, gameFS)
 	if err != nil {
 		return nil, err
 	}

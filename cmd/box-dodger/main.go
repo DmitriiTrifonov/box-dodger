@@ -25,17 +25,17 @@ const (
 )
 
 func main() {
-	playerSprite, err := game.NewSprite("assets/exported/man/man.json")
+	playerSprite, err := game.NewSprite("exported/man/man.json")
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	tileSet, err := game.NewSprite("assets/exported/tileset/tileset.json")
+	tileSet, err := game.NewSprite("exported/tileset/tileset.json")
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	boxSprite, err := game.NewSprite("assets/exported/box/box.json")
+	boxSprite, err := game.NewSprite("exported/box/box.json")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -152,6 +152,8 @@ func main() {
 		game.ActionMoveDown:  {input.KeyGamepadDown, input.KeyDown, input.KeyS},
 		game.ActionExit:      {input.KeyEscape},
 		game.ActionRestart:   {input.KeyR},
+		game.ActionTap:       {input.KeyTouchTap, input.KeyMouseLeft},
+		game.ActionDrag:      {input.KeyTouchDrag},
 	}
 
 	g.Controller.InputHandler = g.Controller.InputSystem.NewHandler(0, keymap)
