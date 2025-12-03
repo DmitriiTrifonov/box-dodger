@@ -16,6 +16,8 @@ const (
 	collisionTagPlayer = "player"
 )
 
+var debugText string
+
 type Game struct {
 	Debug              bool
 	Controller         Controller
@@ -47,15 +49,16 @@ type ForegroundRenderer interface {
 }
 
 func (g *Game) Update() error {
+	err := g.Controller.Update()
+	if err != nil {
+		return err
+	}
+
 	if !g.IsGameOver {
 		g.Player.Object.Sprite.AnimPlayer.Update(float32(1.0 / 60.0))
 		g.Player.Update(ebiten.TPS())
 		//g.Player.HasCollided = g.CheckCollisions()
 		g.Box.Update(ebiten.TPS(), g)
-	}
-	err := g.Controller.Update()
-	if err != nil {
-		return err
 	}
 
 	return nil
@@ -85,7 +88,9 @@ func (g *Game) Draw(screen *ebiten.Image) {
 			gr.RenderBackground(screen)
 		}
 		g.Player.Draw(screen)
+		g.Player.VirtualJoystick.Draw(screen)
 		g.Box.Draw(screen)
+
 		for _, fr := range g.ForegroundRenderer {
 			fr.RenderForeground(screen)
 		}

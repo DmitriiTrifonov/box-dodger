@@ -152,8 +152,7 @@ func main() {
 		game.ActionMoveDown:  {input.KeyGamepadDown, input.KeyDown, input.KeyS},
 		game.ActionExit:      {input.KeyEscape},
 		game.ActionRestart:   {input.KeyR},
-		game.ActionTap:       {input.KeyTouchTap, input.KeyMouseLeft},
-		game.ActionDrag:      {input.KeyTouchDrag},
+		game.ActionDrag:      {input.KeyTouchDrag, input.KeyTouchTap, input.KeyMouseLeft},
 	}
 
 	g.Controller.InputHandler = g.Controller.InputSystem.NewHandler(0, keymap)

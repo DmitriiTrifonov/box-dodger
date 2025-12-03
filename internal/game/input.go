@@ -9,6 +9,5 @@ const (
 	ActionMoveRight
 	ActionMoveUp
 	ActionMoveDown
-	ActionTap
 	ActionDrag
 )
